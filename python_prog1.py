@@ -7,7 +7,7 @@ api_key = "6f8247b10127c8090841adf88d69450c"
 base_url = "http://api.openweathermap.org/data/2.5/weather?"
  
 # Give city name
-city_name = input("Enter city name : ")
+city_name = "delhi"
  
 # complete_url variable to store
 # complete url address
