@@ -10,7 +10,7 @@ base_url2='http://api.openweathermap.org/data/2.5/onecall?lat=33.44&lon=-94.04&e
 response=requests.get(base_url2)
 x=response.json()
 if response.status_code != "404":
-    y=x["current"]
+    y=x['current']
     for p in y:
         print(p,'----------->',y[p])
 else:
