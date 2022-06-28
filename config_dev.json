@@ -12,6 +12,6 @@
     "pod_nw_slowness":{
         "eks_ns":"default",
         "eks_pod":"nginx",
-        "env": "dev"
+        "env":"dev"
     }
 }
