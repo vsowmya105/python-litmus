@@ -7,19 +7,16 @@ project = os.environ['project_name']
 envi = os.environ['environment_name']
 expt = os.environ['experiment']
 
-url='https://raw.githubusercontent.com/sowmyav10/python/python/'
-url = url + project + '/' + envi + '.json'
-print(url)
+def read_config_file():
+    json_config_path = os.path.join(sys.path[0], project + "/config_"  + envi + ".json")
+    return json_config_path
+  
+def load_config_file():
+    config_file_name = read_config_file()
+    file = open(config_file_name)
+    config_data = json.load(file)
+    return config_data
+  
+data=load_config_file()
+print(data)
 
-response = urllib.urlopen(url)
-data_json = json.loads(response.read())
-print(data_json)
-print('DATA : ')
-print(data_json['litmus'])
-
-response1=requests.get(url)
-print(response1.json())
-
-print(expt)
-print(project)
-print(envi)
