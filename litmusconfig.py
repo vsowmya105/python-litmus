@@ -15,6 +15,9 @@ response = urllib.urlopen(url)
 data_json = json.loads(response.read())
 print(data_json)
 
+response1=requests.get(url)
+print(response1.json())
+
 print(expt)
 print(project)
 print(envi)
