@@ -14,6 +14,8 @@ print(url)
 response = urllib.urlopen(url)
 data_json = json.loads(response.read())
 print(data_json)
+print('DATA : ')
+print(data_json['litmus'])
 
 response1=requests.get(url)
 print(response1.json())
