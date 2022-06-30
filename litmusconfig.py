@@ -3,7 +3,7 @@ import os
 import json
 import io
 import requests
-url='https://raw.githubusercontent.com/sowmyav10/python/blob/python/project1/dev.json'
+url='https://raw.githubusercontent.com/sowmyav10/python/python/project1/dev.json'
 response = urlopen(url)
 data_json = json.loads(response.read())
 print(data_json)
