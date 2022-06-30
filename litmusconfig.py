@@ -19,5 +19,6 @@ def load_config_file():
     return config_data
   
 data=load_config_file()
+pritn('DATA : ')
 print(data)
 
