@@ -10,9 +10,10 @@ expt = os.environ['experiment']
 url='https://raw.githubusercontent.com/sowmyav10/python/python/'
 url = url + project + '/' + envi + '.json'
 print(url)
-#response = urllib.urlopen(url)
-#data_json = json.loads(response.read())
-#print(data_json)
+
+response = urllib.urlopen(url)
+data_json = json.loads(response.read())
+print(data_json)
 
 print(expt)
 print(project)
