@@ -1,6 +1,9 @@
 import os
+import io
 import requests
-url='https://github.com/sowmyav10/'
+url='https://raw.githubusercontent.com/sowmyav10/python/blob/python/project1/dev.json'
+page = requests.get(url)
+page = page.json()
 project = os.environ['project_name']
 envi = os.environ['environment_name']
 expt = os.environ['experiment']
