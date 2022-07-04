@@ -213,14 +213,14 @@ def get_network_latency_experiment_body(workflow_name, namespace, deployment):
 def execute_network_latency_experiment(namespace, deployment):
     print("running execute_network_latency_experiment")
     response = get_auth_token()
-
+    print("Auth token received ")
     access_token = response.json()['access_token']
 
     headers = {'authorization': access_token,
                'Content-type': 'application/json'}
     workflow_name = 'network-latency-workflow-' + get_random_number()
     json_data = get_network_latency_experiment_body(workflow_name, namespace, deployment)
-
+    print('got the body ')
     net_latency_response = requests.post(LITMUS_URL + '/api/query',
                                          data=json_data, headers=headers)
     print(net_latency_response.status_code)
