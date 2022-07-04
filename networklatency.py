@@ -133,7 +133,7 @@ def get_network_latency_experiment_body(workflow_name, namespace, deployment):
               "name": "pod-network-latency-5kn",
               "path": "/tmp/chaosengine-pod-network-latency-5kn.yaml",
               "raw": {
-                "data": "apiVersion: litmuschaos.io/v1alpha1\\nkind: ChaosEngine\\nmetadata:\\n  namespace: \\"{{workflow.parameters.adminModeNamespace}}\\"\\n  generateName: pod-network-latency-5kn\\n  labels:\\n    instance_id: 543914de-580e-45fb-86de-016c820aed11\\n    context: pod-network-latency-5kn_litmus\\n    workflow_name: updated_workflow_name\\nspec:\\n  engineState: active\\n  appinfo:\\n    appns: updated_namespace\\n    applabel: app=updated_deployment\\n    appkind: deployment\\n  chaosServiceAccount: litmus-admin\\n  experiments:\\n    - name: pod-network-latency\\n      spec:\\n        components:\\n          env:\\n            - name: TOTAL_CHAOS_DURATION\\n              value: \\"60\\"\\n            - name: NETWORK_LATENCY\\n              value: \\"2000\\"\\n            - name: JITTER\\n              value: \\"0\\"\\n            - name: CONTAINER_RUNTIME\\n              value: docker\\n            - name: SOCKET_PATH\\n              value: /var/run/docker.sock\\n            - name: PODS_AFFECTED_PERC\\n              value: \\"50\\"\\n        probe: []\\n  annotationCheck: \\"false\\"\\n"
+                "data": "apiVersion: litmuschaos.io/v1alpha1\\nkind: ChaosEngine\\nmetadata:\\n  namespace: \\"{{workflow.parameters.adminModeNamespace}}\\"\\n  generateName: pod-network-latency-5kn\\n  labels:\\n    instance_id: 1d8a35b8-e8b5-46e6-859b-c82ace1f9c03\\n    context: pod-network-latency-5kn_litmus\\n    workflow_name: updated_workflow_name\\nspec:\\n  engineState: active\\n  appinfo:\\n    appns: updated_namespace\\n    applabel: app=updated_deployment\\n    appkind: deployment\\n  chaosServiceAccount: litmus-admin\\n  experiments:\\n    - name: pod-network-latency\\n      spec:\\n        components:\\n          env:\\n            - name: TOTAL_CHAOS_DURATION\\n              value: \\"60\\"\\n            - name: NETWORK_LATENCY\\n              value: \\"2000\\"\\n            - name: JITTER\\n              value: \\"0\\"\\n            - name: CONTAINER_RUNTIME\\n              value: docker\\n            - name: SOCKET_PATH\\n              value: /var/run/docker.sock\\n            - name: PODS_AFFECTED_PERC\\n              value: \\"50\\"\\n        probe: []\\n  annotationCheck: \\"false\\"\\n"
               }
             }
           ]
@@ -155,7 +155,7 @@ def get_network_latency_experiment_body(workflow_name, namespace, deployment):
             "-c"
           ],
           "args": [
-            "kubectl delete chaosengine -l \'instance_id in (543914de-580e-45fb-86de-016c820aed11, )\' -n {{workflow.parameters.adminModeNamespace}} "
+            "kubectl delete chaosengine -l \'instance_id in (1d8a35b8-e8b5-46e6-859b-c82ace1f9c03, )\' -n {{workflow.parameters.adminModeNamespace}} "
           ]
         }
       }
