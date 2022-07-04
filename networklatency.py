@@ -223,6 +223,7 @@ def execute_network_latency_experiment(namespace, deployment):
     print('got the body ')
     net_latency_response = requests.post(LITMUS_URL + '/api/query',
                                          data=json_data, headers=headers)
+    print(net_latency_response.json())
     print(net_latency_response.status_code)
 
 
