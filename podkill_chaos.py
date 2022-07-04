@@ -4,11 +4,11 @@ import json
 import requests
 import random
 
-LITMUS_URL = 'http://a5f63721fd82f419e86e4f8c29d96e5a-1578053227.us-east-1.elb.amazonaws.com:9091/'
+LITMUS_URL = 'http://a3607a9d70c94459caced98ef4a1407c-528077293.us-east-1.elb.amazonaws.com:9091/'
 LITMUS_USERNAME = 'admin'
 LITMUS_PASSWORD = 'litmus'
-LITMUS_PROJECT_ID = 'b0ee966d-3345-4b24-a929-bad4b28964b9'
-LITMUS_CLUSTER_ID = 'dab8bab6-415e-4792-83bf-3105b96ebd42'
+LITMUS_PROJECT_ID = '752ed631-5346-4d10-89e7-757dcfa3c630'
+LITMUS_CLUSTER_ID = 'c64d87d2-da08-4667-8daa-4bb20458fd9f'
 POD_DELETE_NAMESPACE = 'nginx'
 POD_DELETE_DEPLOYMENT = 'nginx'
 
