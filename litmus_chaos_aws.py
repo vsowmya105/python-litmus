@@ -11,6 +11,7 @@ LITMUS_URL = 'http://a3607a9d70c94459caced98ef4a1407c-528077293.us-east-1.elb.am
 LITMUS_USERNAME = 'admin'
 LITMUS_PASSWORD = 'litmus'
 LITMUS_PROJECT_ID = '752ed631-5346-4d10-89e7-757dcfa3c630'
+LITMUS_CLUSTER_ID = 'c64d87d2-da08-4667-8daa-4bb20458fd9f'
 MONGODB_ATLAS_PUBLIC_KEY = ''
 MONGODB_ATLAS_PRIVATE_KEY = ''
 LITMUS_PROJECT_ID = ''
@@ -74,7 +75,7 @@ def execute_pod_kill_experiment():
 
 def get_pod_kill_request_body(workflow_name, namespace, deployment):
     project_id = LITMUS_PROJECT_ID
-    cluster_id = get_cluster_id()
+    cluster_id = LITMUS_CLUSTER_ID
     isCustomWorkflow = bool(True)
 
     data = {'operationName': 'createChaosWorkFlow',
