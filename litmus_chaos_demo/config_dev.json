@@ -18,6 +18,6 @@
         "pub_key": "yivksaoz",
         "private_key": "49e54d1c-523e-4191-b593-da7ba4e0714c",
         "env": "dev",
-        "atlas_url": "https://cloud.mongodb.com/api/atlas/v1.5/groups/62c3db38b6167e1e8a089ec1/clusters/atlas-techx-ota-dev/restartPrimaries?pretty=true"
+        "atlas_url": "https://cloud.mongodb.com/api/atlas/v1.5/groups/62c3db38b6167e1e8a089ec1/clusters/Cluster0/restartPrimaries?pretty=true"
     }
 }
