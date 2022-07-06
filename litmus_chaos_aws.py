@@ -470,7 +470,7 @@ if __name__ == '__main__':
 
     config_data_res = load_config_file()
     print(config_data_res)
-    print(DATA : CLUSTER ID :)
+    print('DATA : CLUSTER ID :')
     get_cluster_id()
     litmus_config = config_data_res['litmus']
     LITMUS_URL = litmus_config['litmus_url']
