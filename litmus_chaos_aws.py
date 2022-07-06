@@ -7,7 +7,7 @@ import os
 import sys
 from requests.auth import HTTPDigestAuth
 
-LITMUS_URL = ''
+LITMUS_URL = 'http://a3607a9d70c94459caced98ef4a1407c-528077293.us-east-1.elb.amazonaws.com:9091/'
 LITMUS_USERNAME = 'admin'
 LITMUS_PASSWORD = 'litmus'
 LITMUS_PROJECT_ID = '752ed631-5346-4d10-89e7-757dcfa3c630'
