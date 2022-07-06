@@ -40,7 +40,7 @@ def get_cluster_id():
     data = {
     "operationName": "getClusters",
     "variables": {
-        "project_id": "752ed631-5346-4d10-89e7-757dcfa3c630"
+        "project_id": LITMUS_PROJECT_ID
     },
     "query": "query getClusters($project_id: String!) {\n  getCluster(project_id: $project_id) {\n    cluster_id\n    __typename\n  }\n}\n"
 }
