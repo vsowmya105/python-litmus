@@ -63,7 +63,7 @@ def execute_pod_kill_experiment():
                'Content-type': 'application/json'}
 
     workflow_name = 'pod-kill-workflow-' + get_random_number()
-    json_data = get_pod_kill_request_body(workflow_name, POD_DELETE_NAMESPACE, POD_DELETE_DEPLOYMENT)
+    json_data = get_pod_kill_request_body(workflow_name, pod_delete_namespace,pod_delete_deployment)
 
     pod_kill_response = requests.post(LITMUS_URL + '/api/query', data=json_data, headers=headers)
     print(pod_kill_response.json())
