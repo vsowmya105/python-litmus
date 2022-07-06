@@ -37,7 +37,7 @@ def get_cluster_id():
     access_token = response.json()['access_token']
 
     headers = {'authorization': access_token, 'Content-type': 'application/json'}
-    data = {"operationName":"getClusters","variables":{"project_id": LITMUS_PROJECT_ID },"query":"query getClusters($project_id: String!) {\n  getCluster(project_id: $project_id) {\n    cluster_id\n    __typename\n  }\n}\n"}
+    data = {"operationName":"getClusters","variables":{"project_id":LITMUS_PROJECT_ID},"query":"query getClusters($project_id: String!) {\n  getCluster(project_id: $project_id) {\n    cluster_id\n    __typename\n  }\n}\n"}
     response = requests.post(LITMUS_URL + '/api/query', data=json.dumps(data), headers=headers)
     cluster_id = response.json()['data']['getCluster'][0]['cluster_id']
     print('cluster_id : ' + cluster_id)
