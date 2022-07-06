@@ -150,7 +150,7 @@ def get_pod_kill_request_body(workflow_name, namespace, deployment):
             "sh",
             "-c"
           ],
-          "image": "405524983081.dkr.ecr.ap-southeast-1.amazonaws.com/aella-xplatform-ecr/facility/litmuschaos/k8s:latest"
+          "image": "litmuschaos/k8s:latest"
         }
       },
       {
@@ -171,13 +171,13 @@ def get_pod_kill_request_body(workflow_name, namespace, deployment):
             "-file=/tmp/chaosengine-pod-delete-zw5.yaml",
             "-saveName=/tmp/engine-name"
           ],
-          "image": "405524983081.dkr.ecr.ap-southeast-1.amazonaws.com/aella-xplatform-ecr/facility/litmuschaos/litmus-checker:latest"
+          "image": "litmuschaos/litmus-checker:latest"
         }
       },
       {
         "name": "revert-chaos",
         "container": {
-          "image": "405524983081.dkr.ecr.ap-southeast-1.amazonaws.com/aella-xplatform-ecr/facility/litmuschaos/k8s:latest",
+          "image": "litmuschaos/k8s:latest",
           "command": [
             "sh",
             "-c"
@@ -316,7 +316,7 @@ def get_network_latency_experiment_body(workflow_name, namespace, deployment):
             "sh",
             "-c"
           ],
-          "image": "405524983081.dkr.ecr.ap-southeast-1.amazonaws.com/aella-xplatform-ecr/facility/litmuschaos/k8s:latest"
+          "image": "litmuschaos/k8s:latest"
         }
       },
       {
@@ -337,13 +337,13 @@ def get_network_latency_experiment_body(workflow_name, namespace, deployment):
             "-file=/tmp/chaosengine-pod-network-latency-5kn.yaml",
             "-saveName=/tmp/engine-name"
           ],
-          "image": "405524983081.dkr.ecr.ap-southeast-1.amazonaws.com/aella-xplatform-ecr/facility/litmuschaos/litmus-checker:latest"
+          "image": "litmuschaos/litmus-checker:latest"
         }
       },
       {
         "name": "revert-chaos",
         "container": {
-          "image": "405524983081.dkr.ecr.ap-southeast-1.amazonaws.com/aella-xplatform-ecr/facility/litmuschaos/k8s:latest",
+          "image": "litmuschaos/k8s:latest",
           "command": [
             "sh",
             "-c"
