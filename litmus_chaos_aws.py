@@ -35,7 +35,7 @@ def get_auth_token():
 def get_cluster_id():
     response = get_auth_token()
     access_token = response.json()['access_token']
-
+    
     headers = {'authorization': access_token, 'Content-type': 'application/json'}
     data = {
         "operationName": "getClusters",
@@ -45,7 +45,8 @@ def get_cluster_id():
         "query": "query getClusters($project_id: String!, $cluster_type: String) {\n  getCluster(project_id: $project_id, cluster_type: $cluster_type) {\n    cluster_id\n    cluster_name\n    description\n    is_active\n    is_registered\n    is_cluster_confirmed\n    updated_at\n    created_at\n    cluster_type\n    no_of_schedules\n    no_of_workflows\n    token\n    last_workflow_timestamp\n    agent_namespace\n    agent_scope\n    version\n    __typename\n  }\n}\n"
     }
     response = requests.post(LITMUS_URL + '/api/query', data=json.dumps(data), headers=headers)
-    cluster_id = response.json()['data']['getCluster'][0]['cluster_id']
+    #cluster_id = response.json()['data']['getCluster'][0]['cluster_id']
+    print(response.json())
     return cluster_id
 
 
@@ -469,7 +470,8 @@ if __name__ == '__main__':
 
     config_data_res = load_config_file()
     print(config_data_res)
-
+    print(DATA : CLUSTER ID :)
+    get_cluster_id()
     litmus_config = config_data_res['litmus']
     LITMUS_URL = litmus_config['litmus_url']
     LITMUS_PROJECT_ID = litmus_config['litmus_project_id']
