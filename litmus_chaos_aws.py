@@ -46,9 +46,8 @@ def get_cluster_id():
 }
     response = requests.post(LITMUS_URL + '/api/query', data=json.dumps(data), headers=headers)
     cluster_id=response.json()['data']['getCluster'][0]['cluster_id'];
-    print(response.json())
     print('cluster_id : ' + cluster_id)
-    #return cluster_id
+    return cluster_id
 
 
 ##############################################
@@ -77,7 +76,7 @@ def execute_pod_kill_experiment():
 
 def get_pod_kill_request_body(workflow_name, namespace, deployment):
     project_id = LITMUS_PROJECT_ID
-    cluster_id = LITMUS_CLUSTER_ID
+    cluster_id = get_cluster_id()
     isCustomWorkflow = bool(True)
 
     data = {'operationName': 'createChaosWorkFlow',
@@ -244,7 +243,7 @@ def get_network_latency_experiment_body(workflow_name, namespace, deployment):
     isCustomWorkflow = bool(True)
 
     project_id = LITMUS_PROJECT_ID
-    cluster_id = LITMUS_CLUSTER_ID
+    cluster_id = get_cluster_id()
 
     data = {'operationName': 'createChaosWorkFlow',
             'variables': {'ChaosWorkFlowInput': {
@@ -472,8 +471,7 @@ if __name__ == '__main__':
 
     config_data_res = load_config_file()
     print(config_data_res)
-    print('DATA : CLUSTER ID :')
-    get_cluster_id()
+    
     litmus_config = config_data_res['litmus']
     LITMUS_URL = litmus_config['litmus_url']
     LITMUS_PROJECT_ID = litmus_config['litmus_project_id']
