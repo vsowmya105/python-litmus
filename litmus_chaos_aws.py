@@ -47,7 +47,7 @@ def get_cluster_id():
     response = requests.post(LITMUS_URL + '/api/query', data=json.dumps(data), headers=headers)
     #cluster_id = response.json()['data']['getCluster'][0]['cluster_id']
     print(response.json())
-    return cluster_id
+    #return cluster_id
 
 
 ##############################################
