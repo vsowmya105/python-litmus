@@ -6,7 +6,7 @@ import io
 import requests
 project = os.environ['project_name']
 envi = os.environ['environment_name']
-expt = os.environ['experiment']
+expt = os.environ['experiment_type']
 
 def read_config_file():
     json_config_path = os.path.join(sys.path[0], project + "/config_"  + envi + ".json")
