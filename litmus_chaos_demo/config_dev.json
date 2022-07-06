@@ -1,0 +1,23 @@
+{
+    "litmus":{
+        "litmus_url":"http://a3607a9d70c94459caced98ef4a1407c-528077293.us-east-1.elb.amazonaws.com:9091/",
+        "litmus_project_id":"752ed631-5346-4d10-89e7-757dcfa3c630",
+        "env": "dev"
+    },
+    "pod_delete":{
+        "eks_ns":"nginx",
+        "eks_pod":"nginx",
+        "env": "dev"
+    },
+    "pod_nw_slowness":{
+        "eks_ns":"nginx",
+        "eks_pod":"nginx",
+        "env": "dev"
+    },
+    "mongo_atlas":{
+        "pub_key": "yivksaoz",
+        "private_key": "49e54d1c-523e-4191-b593-da7ba4e0714c",
+        "env": "dev",
+        "atlas_url":""
+    }
+}
