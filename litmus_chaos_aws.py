@@ -7,7 +7,7 @@ import os
 import sys
 from requests.auth import HTTPDigestAuth
 
-LITMUS_URL = 'http://a3607a9d70c94459caced98ef4a1407c-528077293.us-east-1.elb.amazonaws.com:9091/'
+LITMUS_URL = ''
 LITMUS_USERNAME = 'admin'
 LITMUS_PASSWORD = 'litmus'
 LITMUS_PROJECT_ID = '752ed631-5346-4d10-89e7-757dcfa3c630'
@@ -57,17 +57,19 @@ def execute_pod_kill_experiment():
 
     response = get_auth_token()
 
-    access_token = response.json()['access_token']
+    access_token = response.json()
+    print(access_token)
+    #['access_token']
 
-    headers = {'authorization': access_token,
-               'Content-type': 'application/json'}
+    #headers = {'authorization': access_token,
+    #          'Content-type': 'application/json'}
 
-    workflow_name = 'pod-kill-workflow-' + get_random_number()
-    json_data = get_pod_kill_request_body(workflow_name, pod_delete_namespace, pod_delete_deployment)
+ #   workflow_name = 'pod-kill-workflow-' + get_random_number()
+  #  json_data = get_pod_kill_request_body(workflow_name, pod_delete_namespace, pod_delete_deployment)
 
-    pod_kill_response = requests.post(LITMUS_URL + '/api/query', data=json_data, headers=headers)
-    print(pod_kill_response.json())
-    print(pod_kill_response.status_code)
+   # pod_kill_response = requests.post(LITMUS_URL + '/api/query', data=json_data, headers=headers)
+    #print(pod_kill_response.json())
+    #print(pod_kill_response.status_code)
 
 
 ####################################################
