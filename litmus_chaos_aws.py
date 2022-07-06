@@ -242,7 +242,7 @@ def get_network_latency_experiment_body(workflow_name, namespace, deployment):
     isCustomWorkflow = bool(True)
 
     project_id = LITMUS_PROJECT_ID
-    cluster_id = get_cluster_id()
+    cluster_id = LITMUS_CLUSTER_ID
 
     data = {'operationName': 'createChaosWorkFlow',
             'variables': {'ChaosWorkFlowInput': {
