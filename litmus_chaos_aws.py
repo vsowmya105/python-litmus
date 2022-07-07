@@ -7,11 +7,11 @@ import os
 import sys
 from requests.auth import HTTPDigestAuth
 
-LITMUS_URL = 'http://a3607a9d70c94459caced98ef4a1407c-528077293.us-east-1.elb.amazonaws.com:9091/'
+LITMUS_URL = 'http://abfe125c38b8f453dafa4e870423a49b-181312299.us-east-1.elb.amazonaws.com:9091/'
 LITMUS_USERNAME = 'admin'
 LITMUS_PASSWORD = 'litmus'
-LITMUS_PROJECT_ID = '752ed631-5346-4d10-89e7-757dcfa3c630'
-LITMUS_CLUSTER_ID = 'c64d87d2-da08-4667-8daa-4bb20458fd9f'
+LITMUS_PROJECT_ID = '87bd2494-e71f-422c-a5e8-6fe27476ed6d'
+LITMUS_CLUSTER_ID = '4afb4c5d-eed8-4cf3-bd38-2e8ddf76e359'
 MONGODB_ATLAS_PUBLIC_KEY = ''
 MONGODB_ATLAS_PRIVATE_KEY = ''
 LITMUS_PROJECT_ID = ''
