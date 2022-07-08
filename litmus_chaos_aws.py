@@ -508,7 +508,146 @@ def get_ps_custom_experiment_body(workflow_name, experiment_name):
     project_id = LITMUS_PROJECT_ID
     cluster_id = get_cluster_id()
 
-    data = {"operationName":"createChaosWorkFlow","variables":{"ChaosWorkFlowInput":{"workflow_manifest":"{\n  \"apiVersion\": \"argoproj.io/v1alpha1\",\n  \"kind\": \"Workflow\",\n  \"metadata\": {\n    \"name\": \"updated_workflow_name\",\n    \"namespace\": \"litmus\",\n    \"labels\": {\n      \"subject\": \"ps-custom-chaos-workflow-101_litmus\"\n    }\n  },\n  \"spec\": {\n    \"arguments\": {\n      \"parameters\": [\n        {\n          \"name\": \"adminModeNamespace\",\n          \"value\": \"litmus\"\n        }\n      ]\n    },\n    \"entrypoint\": \"custom-chaos\",\n    \"securityContext\": {\n      \"runAsNonRoot\": true,\n      \"runAsUser\": 1000\n    },\n    \"serviceAccountName\": \"argo-chaos\",\n    \"templates\": [\n      {\n        \"name\": \"custom-chaos\",\n        \"steps\": [\n          [\n            {\n              \"name\": \"install-chaos-experiments\",\n              \"template\": \"install-chaos-experiments\"\n            }\n          ],\n          [\n            {\n              \"name\": \"ps-custom-chaos-4yu\",\n              \"template\": \"ps-custom-chaos-4yu\"\n            }\n          ],\n          [\n            {\n              \"name\": \"revert-chaos\",\n              \"template\": \"revert-chaos\"\n            }\n          ]\n        ]\n      },\n      {\n        \"name\": \"install-chaos-experiments\",\n        \"inputs\": {\n          \"artifacts\": [\n            {\n              \"name\": \"ps-custom-chaos-4yu\",\n              \"path\": \"/tmp/ps-custom-chaos-4yu.yaml\",\n              \"raw\": {\n                \"data\": \"apiVersion: litmuschaos.io/v1alpha1\\ndescription:\\n  message: >\\n    it execs inside target pods to run the chaos inject commands, waits for the\\n    chaos duration and reverts the chaos\\nkind: ChaosExperiment\\nmetadata:\\n  name: ps-custom-chaos\\n  labels:\\n    name: ps-custom-chaos\\n    app.kubernetes.io/part-of: litmus\\n    app.kubernetes.io/component: chaosexperiment\\n    app.kubernetes.io/version: 2.0.0\\nspec:\\n  definition:\\n    scope: Namespaced\\n    permissions:\\n      - apiGroups:\\n          - \\\"\\\"\\n          - batch\\n          - apps\\n          - litmuschaos.io\\n        resources:\\n          - jobs\\n          - pods\\n          - pods/log\\n          - events\\n          - deployments\\n          - replicasets\\n          - pods/exec\\n          - chaosengines\\n          - chaosexperiments\\n          - chaosresults\\n        verbs:\\n          - create\\n          - list\\n          - get\\n          - patch\\n          - update\\n          - delete\\n          - deletecollection\\n    image: rantidev7/py-runner:custom-chaos-interns-1.0\\n    imagePullPolicy: Always\\n    args:\\n      - -c\\n      - python3 -u experiment -name chaos\\n    command:\\n      - /bin/bash\\n    env:\\n      - name: SEQUENCE\\n        value: parallel\\n    labels:\\n      name: ps-custom-chaos\\n      app.kubernetes.io/part-of: litmus\\n      app.kubernetes.io/component: ps-custom-chaos-job\\n      app.kubernetes.io/version: 2.0.0\\n\"\n              }\n            }\n          ]\n        },\n        \"container\": {\n          \"args\": [\n            \"kubectl apply -f /tmp/ps-custom-chaos-4yu.yaml -n {{workflow.parameters.adminModeNamespace}} |  sleep 30\"\n          ],\n          \"command\": [\n            \"sh\",\n            \"-c\"\n          ],\n          \"image\": \"litmuschaos/k8s:latest\"\n        }\n      },\n      {\n        \"name\": \"ps-custom-chaos-4yu\",\n        \"inputs\": {\n          \"artifacts\": [\n            {\n              \"name\": \"ps-custom-chaos-4yu\",\n              \"path\": \"/tmp/chaosengine-ps-custom-chaos-4yu.yaml\",\n              \"raw\": {\n                \"data\": \"apiVersion: litmuschaos.io/v1alpha1\\nkind: ChaosEngine\\nmetadata:\\n  generateName: ps-custom-chaos-4yu\\n  namespace: \\\"{{workflow.parameters.adminModeNamespace}}\\\"\\n  labels:\\n    instance_id: 11bf7668-6363-4a2a-b7ce-191e3a7eb399\\n    context: ps-custom-chaos-4yu_litmus\\n    workflow_name: updated_workflow_name\\nspec:\\n  engineState: active\\n  auxiliaryAppInfo: \\\"\\\"\\n  chaosServiceAccount: litmus-admin\\n  jobCleanUpPolicy: retain\\n  experiments:\\n    - name: ps-custom-chaos\\n      spec:\\n        components:\\n          env:\\n            - name: TOTAL_CHAOS_DURATION\\n              value: \\\"10\\\"\\n            - name: AWS_ACCESS_KEY_ID\\n              value: AWS_ACCESS_KEY_ID_VALUE\\n            - name: KAFKA_CLUSTER_ARN\\n              value: KAFKA_CLUSTER_ARN_VALUE\\n            - name: FORCE\\n              value: \\\"true\\\"\\n            - name: KAFKA_AWS_REGION\\n              value: KAFKA_AWS_REGION_VALUE\\n            - name: CUSTOM_EXPERIMENT_NAME\\n              value: CUSTOM_EXPERIMENT_NAME_VALUE\\n            - name: AWS_SECRET_ACCESS_KEY\\n              value: AWS_SECRET_ACCESS_KEY_VALUE\\n            - name: ELASTIC_CACHE_AWS_REGION\\n              value: ELASTIC_CACHE_AWS_REGION_VALUE\\n            - name: ELASTIC_CACHE_REPLICATION_GROUP_ID\\n              value: ELASTIC_CACHE_REPLICATION_GROUP_ID_VALUE\\n            - name: ELASTIC_CACHE_NODE_GROUP_ID\\n              value: \\\"ELASTIC_CACHE_NODE_GROUP_ID_VALUE\\\"\\n            - name: MONGO_ATLAS_CLUSTER_URL\\n              value: MONGO_ATLAS_CLUSTER_URL_VALUE\\n            - name: MONGO_CLUSTER_PUBLIC_KEY\\n              value: MONGO_CLUSTER_PUBLIC_KEY_VALUE\\n            - name: MONGO_CLUSTER_PRIVATE_KEY\\n              value: MONGO_CLUSTER_PRIVATE_KEY_VALUE\\n            - name: SEQUENCE\\n              value: parallel\\n        probe: []\\n  annotationCheck: \\\"false\\\"\\n\"\n              }\n            }\n          ]\n        },\n        \"container\": {\n          \"args\": [\n            \"-file=/tmp/chaosengine-ps-custom-chaos-4yu.yaml\",\n            \"-saveName=/tmp/engine-name\"\n          ],\n          \"image\": \"litmuschaos/litmus-checker:latest\"\n        }\n      },\n      {\n        \"name\": \"revert-chaos\",\n        \"container\": {\n          \"image\": \"litmuschaos/k8s:latest",\n          \"command\": [\n            \"sh\",\n            \"-c\"\n          ],\n          \"args\": [\n            \"kubectl delete chaosengine -l 'instance_id in (11bf7668-6363-4a2a-b7ce-191e3a7eb399, )' -n {{workflow.parameters.adminModeNamespace}} \"\n          ]\n        }\n      }\n    ],\n    \"imagePullSecrets\": [\n      {\n        \"name\": \"\"\n      }\n    ],\n    \"podGC\": {\n      \"strategy\": \"OnWorkflowCompletion\"\n    }\n  }\n}","cronSyntax":"","workflow_name":"updated_workflow_name","workflow_description":"Custom Chaos Workflow","isCustomWorkflow":isCustomWorkflow,"weightages":[{"experiment_name":"ps-custom-chaos","weightage":10}],"project_id":"updated_project_id","cluster_id":"updated_cluster_id"}},"query":"mutation createChaosWorkFlow($ChaosWorkFlowInput: ChaosWorkFlowInput!) {\n  createChaosWorkFlow(input: $ChaosWorkFlowInput) {\n    workflow_id\n    cronSyntax\n    workflow_name\n    workflow_description\n    isCustomWorkflow\n    __typename\n  }\n}\n"}
+    data = {"operationName":"createChaosWorkFlow",
+            "variables":{"ChaosWorkFlowInput":{
+                "workflow_manifest":'''{
+  "apiVersion": "argoproj.io/v1alpha1",
+  "kind": "Workflow",
+  "metadata": {
+    "name": "updated_workflow_name",
+    "namespace": "litmus",
+    "labels": {
+      "subject": "ps-custom-chaos-workflow-101_litmus"
+    }
+  },
+  "spec": {
+    "arguments": {
+      "parameters": [
+        {
+          "name": "adminModeNamespace",
+          "value": "litmus"
+        }
+      ]
+    },
+    "entrypoint": "custom-chaos",
+    "securityContext": {
+      "runAsNonRoot": true,
+      "runAsUser": 1000
+    },
+    "serviceAccountName": "argo-chaos",
+    templates": [
+      {
+        "name": "custom-chaos",
+        "steps": [
+          [
+            {
+              "name": "install-chaos-experiments",
+              "template": "install-chaos-experiments"
+            }
+          ],
+          [
+            {
+              "name": "ps-custom-chaos-4yu",
+              "template": "ps-custom-chaos-4yu"
+            }
+          ],
+          [
+            {
+              "name": "revert-chaos",
+              "template": "revert-chaos"
+            }
+          ]
+        ]
+      },
+      {
+        "name": "install-chaos-experiments",
+        "inputs": {
+          "artifacts": [
+            {
+              "name": "ps-custom-chaos-4yu",
+              "path": "/tmp/ps-custom-chaos-4yu.yaml",
+              "raw": {
+                "data": "apiVersion: litmuschaos.io/v1alpha1\\ndescription:\\n  message: >\\n    it execs inside target pods to run the chaos inject commands, waits for the\\n    chaos duration and reverts the chaos\\nkind: ChaosExperiment\\nmetadata:\\n  name: ps-custom-chaos\\n  labels:\\n    name: ps-custom-chaos\\n    app.kubernetes.io/part-of: litmus\\n    app.kubernetes.io/component: chaosexperiment\\n    app.kubernetes.io/version: latest\\nspec:\\n  definition:\\n    scope: Namespaced\\n    permissions:\\n      - apiGroups:\\n          - \\"\\"\\n          - batch\\n          - apps\\n          - litmuschaos.io\\n        resources:\\n          - jobs\\n          - pods\\n          - pods/log\\n          - events\\n          - deployments\\n          - replicasets\\n          - pods/exec\\n          - chaosengines\\n          - chaosexperiments\\n          - chaosresults\\n        verbs:\\n          - create\\n          - list\\n          - get\\n          - patch\\n          - update\\n          - delete\\n          - deletecollection\\n    image: rantidev7/py-runner:custom-chaos-interns-1.0\\n    imagePullPolicy: Always\\n    args:\\n      - -c\\n      - python3 -u experiment -name chaos\\n    command:\\n      - /bin/bash\\n    env:\\n      - name: SEQUENCE\\n        value: parallel\\n    labels:\\n      name: ps-custom-chaos\\n      app.kubernetes.io/part-of: litmus\\n      app.kubernetes.io/component: ps-custom-chaos-job\\n      app.kubernetes.io/version: latest\\n"
+              }
+            }
+          ]
+        },
+        "container": {
+          "args": [
+            "kubectl apply -f /tmp/ps-custom-chaos-4yu.yaml -n {{workflow.parameters.adminModeNamespace}} |  sleep 30"
+          ],
+          "command": [
+            "sh",
+            "-c"
+          ],
+          "image": "litmuschaos/k8s:latest"
+        }
+      },
+      {
+        "name": "ps-custom-chaos-4yu",
+        "inputs": {
+          "artifacts": [
+            {
+              "name": "ps-custom-chaos-4yu",
+              "path": "/tmp/chaosengine-ps-custom-chaos-4yu.yaml",
+              "raw": {
+                "data": "apiVersion: litmuschaos.io/v1alpha1\\nkind: ChaosEngine\\nmetadata:\\n  generateName: ps-custom-chaos-4yu\\n  namespace: \\"{{workflow.parameters.adminModeNamespace}}\\"\\n  labels:\\n    instance_id: 11bf7668-6363-4a2a-b7ce-191e3a7eb399\\n    context: ps-custom-chaos-4yu_litmus\\n    workflow_name: updated_workflow_name\\nspec:\\n  engineState: active\\n  auxiliaryAppInfo: \\"\\"\\n  chaosServiceAccount: litmus-admin\\n  jobCleanUpPolicy: retain\\n  experiments:\\n    - name: ps-custom-chaos\\n      spec:\\n        components:\\n          env:\\n            - name: TOTAL_CHAOS_DURATION\\n              value: \\"10\\"\\n            - name: AWS_ACCESS_KEY_ID\\n              value: AWS_ACCESS_KEY_ID_VALUE\\n            - name: KAFKA_CLUSTER_ARN\\n              value: KAFKA_CLUSTER_ARN_VALUE\\n            - name: FORCE\\n              value: \\"true\\"\\n            - name: KAFKA_AWS_REGION\\n              value: KAFKA_AWS_REGION_VALUE\\n            - name: CUSTOM_EXPERIMENT_NAME\\n              value: CUSTOM_EXPERIMENT_NAME_VALUE\\n            - name: AWS_SECRET_ACCESS_KEY\\n              value: AWS_SECRET_ACCESS_KEY_VALUE\\n            - name: ELASTIC_CACHE_AWS_REGION\\n              value: ELASTIC_CACHE_AWS_REGION_VALUE\\n            - name: ELASTIC_CACHE_REPLICATION_GROUP_ID\\n              value: ELASTIC_CACHE_REPLICATION_GROUP_ID_VALUE\\n            - name: ELASTIC_CACHE_NODE_GROUP_ID\\n              value: \\"ELASTIC_CACHE_NODE_GROUP_ID_VALUE\\"\\n            - name: MONGO_ATLAS_CLUSTER_URL\\n              value: MONGO_ATLAS_CLUSTER_URL_VALUE\\n            - name: MONGO_CLUSTER_PUBLIC_KEY\\n              value: MONGO_CLUSTER_PUBLIC_KEY_VALUE\\n            - name: MONGO_CLUSTER_PRIVATE_KEY\\n              value: MONGO_CLUSTER_PRIVATE_KEY_VALUE\\n            - name: SEQUENCE\\n              value: parallel\\n        probe: []\\n  annotationCheck: \\"false\\"\\n"
+              }
+            }
+          ]
+        },
+        "container": {
+          "args": [
+            "-file=/tmp/chaosengine-ps-custom-chaos-4yu.yaml",
+            "-saveName=/tmp/engine-name"
+          ],
+          "image": "litmuschaos/litmus-checker:latest"
+        }
+      },
+      {
+        "name": "revert-chaos",
+        "container": {
+          "image": "litmuschaos/k8s:latest",
+          "command": [
+            "sh",
+            "-c"
+          ],
+          "args": [
+            "kubectl delete chaosengine -l 'instance_id in (11bf7668-6363-4a2a-b7ce-191e3a7eb399, )' -n {{workflow.parameters.adminModeNamespace}} "
+          ]
+        }
+      }
+    ],
+    "imagePullSecrets": [
+      {
+        "name": ""
+      }
+    ],
+    "podGC": {
+      "strategy": "OnWorkflowCompletion"
+    }
+  }
+}''',
+                "cronSyntax":"",
+                "workflow_name":"updated_workflow_name",
+                "workflow_description":"Custom Chaos Workflow",
+                "isCustomWorkflow":isCustomWorkflow,
+                "weightages":[{"experiment_name":"ps-custom-chaos",
+                               "weightage":10}],
+                "project_id":"updated_project_id",
+                "cluster_id":"updated_cluster_id"
+            }},
+            'query':'''mutation createChaosWorkFlow($ChaosWorkFlowInput: ChaosWorkFlowInput!) {
+  createChaosWorkFlow(input: $ChaosWorkFlowInput) {
+    workflow_id
+    cronSyntax
+    workflow_name
+    workflow_description
+    isCustomWorkflow
+    __typename
+  }
+}
+'''}
 
     updated_workflow_manifest_str = data['variables']['ChaosWorkFlowInput']['workflow_manifest']\
 
