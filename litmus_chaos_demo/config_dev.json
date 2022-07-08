@@ -15,9 +15,22 @@
         "env": "dev"
     },
     "mongo_atlas":{
-        "pub_key": "yivksaoz",
+        "public_key": "yivksaoz",
         "private_key": "49e54d1c-523e-4191-b593-da7ba4e0714c",
         "env": "dev",
         "atlas_url": "https://cloud.mongodb.com/api/atlas/v1.5/groups/62c3db38b6167e1e8a089ec1/clusters/Cluster0/restartPrimaries?pretty=true"
+    },
+    "kafka" : {
+        "kafka_aws_region" : "us-east-1",
+        "kafka_cluster_arn" : "arn:aws:kafka:us-east-1:406084326040:cluster/kafka/8ef3350d-fa6f-4574-8bf9-c9d1acfff290-25",
+        "aws_access_key_id" : "AKIAV5DEDCKMPQHD3SQ7",
+        "aws_secret_access_key" : "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"
+    },
+    "redis" : {
+        "redis_node_groupId" : "001",
+        "redis_replication_groupId" : "choas-demo-redis",
+        "redis_aws_region" : "us-east-1",
+        "aws_access_key_id" : "AKIAV5DEDCKMPQHD3SQ7",
+        "aws_secret_access_key" : "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"
     }
 }
