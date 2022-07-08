@@ -5,12 +5,12 @@
         "env": "dev"
     },
     "pod_delete":{
-        "eks_ns":"nginx",
+        "eks_ns":"default",
         "eks_pod":"nginx",
         "env": "dev"
     },
     "pod_nw_slowness":{
-        "eks_ns":"nginx",
+        "eks_ns":"default",
         "eks_pod":"nginx",
         "env": "dev"
     },
