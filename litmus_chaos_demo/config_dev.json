@@ -1,7 +1,7 @@
 {
     "litmus":{
-        "litmus_url":"http://abfe125c38b8f453dafa4e870423a49b-181312299.us-east-1.elb.amazonaws.com:9091/",
-        "litmus_project_id":"87bd2494-e71f-422c-a5e8-6fe27476ed6d",
+        "litmus_url":"http://a540f7e78636e48a5b4e55f16bb11566-99726288.us-east-1.elb.amazonaws.com:9091/",
+        "litmus_project_id":"2e2b336c-632c-4bb7-8bd2-44de7bd1e82c",
         "env": "dev"
     },
     "pod_delete":{
