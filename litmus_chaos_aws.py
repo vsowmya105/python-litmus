@@ -37,14 +37,14 @@ def get_cluster_id():
 
     headers = {'authorization': access_token, 'Content-type': 'application/json'}
     data = {
-    "operationName": "getClusters",
-    "variables": {
-        "project_id": LITMUS_PROJECT_ID
-    },
-    "query": "query getClusters($project_id: String!) {\n  getCluster(project_id: $project_id) {\n    cluster_id\n    __typename\n  }\n}\n"
-}
+        "operationName": "getClusters",
+        "variables": {
+            "project_id": LITMUS_PROJECT_ID
+        },
+        "query": "query getClusters($project_id: String!) {\n  getCluster(project_id: $project_id) {\n    cluster_id\n    __typename\n  }\n}\n"
+    }
     response = requests.post(LITMUS_URL + '/api/query', data=json.dumps(data), headers=headers)
-    cluster_id=response.json()['data']['getCluster'][0]['cluster_id'];
+    cluster_id = response.json()['data']['getCluster'][0]['cluster_id'];
     print('cluster_id : ' + cluster_id)
     return cluster_id
 
@@ -64,7 +64,7 @@ def execute_pod_kill_experiment():
                'Content-type': 'application/json'}
 
     workflow_name = 'pod-kill-workflow-' + get_random_number()
-    json_data = get_pod_kill_request_body(workflow_name, pod_delete_namespace,pod_delete_deployment)
+    json_data = get_pod_kill_request_body(workflow_name, pod_delete_namespace, pod_delete_deployment)
 
     pod_kill_response = requests.post(LITMUS_URL + '/api/query', data=json_data, headers=headers)
     print(pod_kill_response.json())
@@ -466,11 +466,106 @@ def read_config_file():
 
 #############################################################
 
+def get_ps_custom_experiment_body(workflow_name, experiment_name):
+
+    print('inside get_ps_custom_experiment_body()')
+    mongo_atlas = config_data_res['mongo_atlas']
+    redis = config_data_res['redis']
+    kafka = config_data_res['kafka']
+    isCustomWorkflow = bool(True)
+    mongo_atlas_cluster_url_value = ''
+    mongo_cluster_private_key_value = ''
+    mongo_cluster_public_key_value = ''
+    kafka_aws_region_value = ''
+    kafka_cluster_arn_value = ''
+    aws_access_key_id_value = ''
+    elastic_cache_node_group_id_value = ''
+    elastic_cache_replication_group_id_value = ''
+    elastic_cache_aws_region_value = ''
+    aws_secret_access_key_value = ''
+
+
+    if experiment_name == 'ATLAS':
+        mongo_atlas_cluster_url_value = mongo_atlas['atlas_url']
+        mongo_cluster_private_key_value = mongo_atlas['public_key']
+        mongo_cluster_public_key_value = mongo_atlas['private_key']
+    elif experiment_name == 'KAFKA':
+        kafka_aws_region_value = kafka['kafka_aws_region']
+        kafka_cluster_arn_value = kafka['kafka_cluster_arn']
+        aws_access_key_id_value = kafka['aws_access_key_id']
+        aws_secret_access_key_value = kafka['aws_secret_access_key']
+    elif experiment_name == 'REDIS':
+        elastic_cache_node_group_id_value = redis['redis_node_groupId']
+        elastic_cache_replication_group_id_value = redis['redis_replication_groupId']
+        elastic_cache_aws_region_value = redis['redis_aws_region']
+        aws_access_key_id_value = redis['aws_access_key_id']
+        aws_secret_access_key_value = redis['aws_secret_access_key']
+    else:
+     print('No custom experiment name supplied')
+
+    custom_experiment_name_value = experiment_name
+
+    project_id = LITMUS_PROJECT_ID
+    cluster_id = get_cluster_id()
+
+    data = {"operationName":"createChaosWorkFlow","variables":{"ChaosWorkFlowInput":{"workflow_manifest":"{\n  \"apiVersion\": \"argoproj.io/v1alpha1\",\n  \"kind\": \"Workflow\",\n  \"metadata\": {\n    \"name\": \"updated_workflow_name\",\n    \"namespace\": \"litmus\",\n    \"labels\": {\n      \"subject\": \"ps-custom-chaos-workflow-101_litmus\"\n    }\n  },\n  \"spec\": {\n    \"arguments\": {\n      \"parameters\": [\n        {\n          \"name\": \"adminModeNamespace\",\n          \"value\": \"litmus\"\n        }\n      ]\n    },\n    \"entrypoint\": \"custom-chaos\",\n    \"securityContext\": {\n      \"runAsNonRoot\": true,\n      \"runAsUser\": 1000\n    },\n    \"serviceAccountName\": \"argo-chaos\",\n    \"templates\": [\n      {\n        \"name\": \"custom-chaos\",\n        \"steps\": [\n          [\n            {\n              \"name\": \"install-chaos-experiments\",\n              \"template\": \"install-chaos-experiments\"\n            }\n          ],\n          [\n            {\n              \"name\": \"ps-custom-chaos-4yu\",\n              \"template\": \"ps-custom-chaos-4yu\"\n            }\n          ],\n          [\n            {\n              \"name\": \"revert-chaos\",\n              \"template\": \"revert-chaos\"\n            }\n          ]\n        ]\n      },\n      {\n        \"name\": \"install-chaos-experiments\",\n        \"inputs\": {\n          \"artifacts\": [\n            {\n              \"name\": \"ps-custom-chaos-4yu\",\n              \"path\": \"/tmp/ps-custom-chaos-4yu.yaml\",\n              \"raw\": {\n                \"data\": \"apiVersion: litmuschaos.io/v1alpha1\\ndescription:\\n  message: >\\n    it execs inside target pods to run the chaos inject commands, waits for the\\n    chaos duration and reverts the chaos\\nkind: ChaosExperiment\\nmetadata:\\n  name: ps-custom-chaos\\n  labels:\\n    name: ps-custom-chaos\\n    app.kubernetes.io/part-of: litmus\\n    app.kubernetes.io/component: chaosexperiment\\n    app.kubernetes.io/version: 2.0.0\\nspec:\\n  definition:\\n    scope: Namespaced\\n    permissions:\\n      - apiGroups:\\n          - \\\"\\\"\\n          - batch\\n          - apps\\n          - litmuschaos.io\\n        resources:\\n          - jobs\\n          - pods\\n          - pods/log\\n          - events\\n          - deployments\\n          - replicasets\\n          - pods/exec\\n          - chaosengines\\n          - chaosexperiments\\n          - chaosresults\\n        verbs:\\n          - create\\n          - list\\n          - get\\n          - patch\\n          - update\\n          - delete\\n          - deletecollection\\n    image: rantidev7/py-runner:custom-chaos-interns-1.0\\n    imagePullPolicy: Always\\n    args:\\n      - -c\\n      - python3 -u experiment -name chaos\\n    command:\\n      - /bin/bash\\n    env:\\n      - name: SEQUENCE\\n        value: parallel\\n    labels:\\n      name: ps-custom-chaos\\n      app.kubernetes.io/part-of: litmus\\n      app.kubernetes.io/component: ps-custom-chaos-job\\n      app.kubernetes.io/version: 2.0.0\\n\"\n              }\n            }\n          ]\n        },\n        \"container\": {\n          \"args\": [\n            \"kubectl apply -f /tmp/ps-custom-chaos-4yu.yaml -n {{workflow.parameters.adminModeNamespace}} |  sleep 30\"\n          ],\n          \"command\": [\n            \"sh\",\n            \"-c\"\n          ],\n          \"image\": \"litmuschaos/k8s:latest\"\n        }\n      },\n      {\n        \"name\": \"ps-custom-chaos-4yu\",\n        \"inputs\": {\n          \"artifacts\": [\n            {\n              \"name\": \"ps-custom-chaos-4yu\",\n              \"path\": \"/tmp/chaosengine-ps-custom-chaos-4yu.yaml\",\n              \"raw\": {\n                \"data\": \"apiVersion: litmuschaos.io/v1alpha1\\nkind: ChaosEngine\\nmetadata:\\n  generateName: ps-custom-chaos-4yu\\n  namespace: \\\"{{workflow.parameters.adminModeNamespace}}\\\"\\n  labels:\\n    instance_id: 11bf7668-6363-4a2a-b7ce-191e3a7eb399\\n    context: ps-custom-chaos-4yu_litmus\\n    workflow_name: updated_workflow_name\\nspec:\\n  engineState: active\\n  auxiliaryAppInfo: \\\"\\\"\\n  chaosServiceAccount: litmus-admin\\n  jobCleanUpPolicy: retain\\n  experiments:\\n    - name: ps-custom-chaos\\n      spec:\\n        components:\\n          env:\\n            - name: TOTAL_CHAOS_DURATION\\n              value: \\\"10\\\"\\n            - name: AWS_ACCESS_KEY_ID\\n              value: AWS_ACCESS_KEY_ID_VALUE\\n            - name: KAFKA_CLUSTER_ARN\\n              value: KAFKA_CLUSTER_ARN_VALUE\\n            - name: FORCE\\n              value: \\\"true\\\"\\n            - name: KAFKA_AWS_REGION\\n              value: KAFKA_AWS_REGION_VALUE\\n            - name: CUSTOM_EXPERIMENT_NAME\\n              value: CUSTOM_EXPERIMENT_NAME_VALUE\\n            - name: AWS_SECRET_ACCESS_KEY\\n              value: AWS_SECRET_ACCESS_KEY_VALUE\\n            - name: ELASTIC_CACHE_AWS_REGION\\n              value: ELASTIC_CACHE_AWS_REGION_VALUE\\n            - name: ELASTIC_CACHE_REPLICATION_GROUP_ID\\n              value: ELASTIC_CACHE_REPLICATION_GROUP_ID_VALUE\\n            - name: ELASTIC_CACHE_NODE_GROUP_ID\\n              value: \\\"ELASTIC_CACHE_NODE_GROUP_ID_VALUE\\\"\\n            - name: MONGO_ATLAS_CLUSTER_URL\\n              value: MONGO_ATLAS_CLUSTER_URL_VALUE\\n            - name: MONGO_CLUSTER_PUBLIC_KEY\\n              value: MONGO_CLUSTER_PUBLIC_KEY_VALUE\\n            - name: MONGO_CLUSTER_PRIVATE_KEY\\n              value: MONGO_CLUSTER_PRIVATE_KEY_VALUE\\n            - name: SEQUENCE\\n              value: parallel\\n        probe: []\\n  annotationCheck: \\\"false\\\"\\n\"\n              }\n            }\n          ]\n        },\n        \"container\": {\n          \"args\": [\n            \"-file=/tmp/chaosengine-ps-custom-chaos-4yu.yaml\",\n            \"-saveName=/tmp/engine-name\"\n          ],\n          \"image\": \"litmuschaos/litmus-checker:latest\"\n        }\n      },\n      {\n        \"name\": \"revert-chaos\",\n        \"container\": {\n          \"image\": \"litmuschaos/k8s:latest",\n          \"command\": [\n            \"sh\",\n            \"-c\"\n          ],\n          \"args\": [\n            \"kubectl delete chaosengine -l 'instance_id in (11bf7668-6363-4a2a-b7ce-191e3a7eb399, )' -n {{workflow.parameters.adminModeNamespace}} \"\n          ]\n        }\n      }\n    ],\n    \"imagePullSecrets\": [\n      {\n        \"name\": \"\"\n      }\n    ],\n    \"podGC\": {\n      \"strategy\": \"OnWorkflowCompletion\"\n    }\n  }\n}","cronSyntax":"","workflow_name":"updated_workflow_name","workflow_description":"Custom Chaos Workflow","isCustomWorkflow":isCustomWorkflow,"weightages":[{"experiment_name":"ps-custom-chaos","weightage":10}],"project_id":"updated_project_id","cluster_id":"updated_cluster_id"}},"query":"mutation createChaosWorkFlow($ChaosWorkFlowInput: ChaosWorkFlowInput!) {\n  createChaosWorkFlow(input: $ChaosWorkFlowInput) {\n    workflow_id\n    cronSyntax\n    workflow_name\n    workflow_description\n    isCustomWorkflow\n    __typename\n  }\n}\n"}
+
+    updated_workflow_manifest_str = data['variables']['ChaosWorkFlowInput']['workflow_manifest']\
+
+    ## replacing values
+    updated_workflow_manifest_str = data['variables']['ChaosWorkFlowInput']['workflow_manifest'].replace(
+        'updated_workflow_name', workflow_name) \
+        .replace('ELASTIC_CACHE_NODE_GROUP_ID_VALUE', elastic_cache_node_group_id_value) \
+        .replace('ELASTIC_CACHE_REPLICATION_GROUP_ID_VALUE', elastic_cache_replication_group_id_value) \
+        .replace('ELASTIC_CACHE_AWS_REGION_VALUE', elastic_cache_aws_region_value) \
+        .replace('AWS_SECRET_ACCESS_KEY_VALUE', aws_secret_access_key_value) \
+        .replace('CUSTOM_EXPERIMENT_NAME_VALUE', custom_experiment_name_value) \
+        .replace('KAFKA_AWS_REGION_VALUE', kafka_aws_region_value). \
+        replace('KAFKA_CLUSTER_ARN_VALUE', kafka_cluster_arn_value) \
+        .replace('AWS_ACCESS_KEY_ID_VALUE', aws_access_key_id_value) \
+        .replace('MONGO_ATLAS_CLUSTER_URL_VALUE', mongo_atlas_cluster_url_value) \
+        .replace('MONGO_CLUSTER_PRIVATE_KEY_VALUE', mongo_cluster_private_key_value) \
+        .replace('MONGO_CLUSTER_PUBLIC_KEY_VALUE', mongo_cluster_public_key_value)
+
+    updated_workflow_name_str = data['variables']['ChaosWorkFlowInput']['workflow_name'].replace(
+        'updated_workflow_name', workflow_name)
+
+    project_id_str = data['variables']['ChaosWorkFlowInput']['project_id'].replace('updated_project_id', project_id)
+    cluster_id_str = data['variables']['ChaosWorkFlowInput']['cluster_id'].replace('updated_cluster_id', cluster_id)
+
+    ## Inserting updated values
+    data['variables']['ChaosWorkFlowInput']['workflow_manifest'] = updated_workflow_manifest_str
+    data['variables']['ChaosWorkFlowInput']['workflow_name'] = updated_workflow_name_str
+    data['variables']['ChaosWorkFlowInput']['project_id'] = project_id_str
+    data['variables']['ChaosWorkFlowInput']['cluster_id'] = cluster_id_str
+    return json.dumps(data)
+
+##########################################################################
+
+def execute_ps_custom_experiment(experiment_name):
+    print("running execute_ps_custom_experiment")
+    response = get_auth_token()
+
+    access_token = response.json()['access_token']
+
+    headers = {'authorization': access_token,
+               'Content-type': 'application/json'}
+    workflow_name = 'ps-custom-chaos-workflow-' + get_random_number()
+    json_data = get_ps_custom_experiment_body(workflow_name, experiment_name)
+
+    ps_custom_chaos_workflow_response = requests.post(LITMUS_URL + '/api/query',
+                                                      data=json_data, headers=headers)
+    print(ps_custom_chaos_workflow_response.status_code)
+    print(ps_custom_chaos_workflow_response.json())
+
+
+############################################################
+
 if __name__ == '__main__':
 
     config_data_res = load_config_file()
     print(config_data_res)
-    
+
     litmus_config = config_data_res['litmus']
     LITMUS_URL = litmus_config['litmus_url']
     LITMUS_PROJECT_ID = litmus_config['litmus_project_id']
@@ -484,7 +579,10 @@ if __name__ == '__main__':
         print(experiment_type)
         execute_pod_kill_experiment()
         execute_network_latency_experiment()
-        terminate_mongo_atlas_instance()
+        execute_ps_custom_experiment('ATLAS')
+        execute_ps_custom_experiment('KAFKA')
+        execute_ps_custom_experiment('REDIS')
+
     elif experiment_type == 'POD_TERMINATION':
         print(experiment_type)
         execute_pod_kill_experiment()
@@ -493,6 +591,13 @@ if __name__ == '__main__':
         execute_network_latency_experiment()
     elif experiment_type == 'ATLAS':
         print(experiment_type)
-        terminate_mongo_atlas_instance()
+        execute_ps_custom_experiment('ATLAS')
+    elif experiment_type == 'REDIS' :
+        print(experiment_type)
+        execute_ps_custom_experiment('REDIS')
+    elif experiment_type == 'KAFKA' :
+        print(experiment_type)
+        execute_ps_custom_experiment('KAFKA')
+
     else:
         print("Please enter valid choice[ALL, POD_TERMINATION, NETWORK_LAG, ATLAS, ] ")
