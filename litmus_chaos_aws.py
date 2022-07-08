@@ -627,7 +627,7 @@ def get_ps_custom_experiment_body(workflow_name, experiment_name):
                     "cronSyntax":"",
                     "workflow_name":"updated_workflow_name",
                     "workflow_description":"Custom Chaos Workflow",
-                    "isCustomWorkflow":true,
+                    "isCustomWorkflow" : isCustomWorkflow,
                     "weightages":[{
                         "experiment_name":"ps-custom-chaos",
                         "weightage":10}],
